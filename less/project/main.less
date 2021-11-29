@@ -1,0 +1,75 @@
+.main {
+    padding: 36px 0;
+
+    .title {
+        font-size: 60px;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    .wysiwyg {
+        max-width: 992px;
+
+        p {
+            color: #76767B;
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+    }
+
+    .numbers {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 726px;
+        margin-top: 49px;
+        margin-bottom: 40px;
+
+        &__item {
+            margin-right: 10px;
+            .numb {
+                font-size: 60px;
+                color: #DBDBDB;
+                font-weight: 700;
+                margin-bottom: 10px;
+                padding-left: 9px;
+                position: relative;
+
+                &:before {
+                    content: attr(data-numb);
+                    font-size: 60px;
+                    color: @blue;
+                    opacity: 0.1;
+                    font-weight: 700;
+                    position: absolute;
+                    left: 9px;
+                    top: 0;
+                    transition: 0.3s;
+                    z-index: -1;
+                }
+            }
+
+            .text {
+                color: #DBDBDB;
+                font-weight: 600;
+                letter-spacing: -0.5px;
+            }
+
+            &.active {
+                .numb {
+                    color: @blue;
+
+                    &:before {
+                        left: 0;
+                        top: -6px;
+                    }
+                }
+
+                .text {
+                    color: @text;
+                }
+            }
+        }
+    }
+}
