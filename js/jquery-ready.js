@@ -24,98 +24,119 @@ $(document).ready(function() {
         }
     }
 
-
-    btnNext.addEventListener('click', function(evt) {
-        evt.preventDefault();
+    function stepHandle(action) {
 
         let allSteps = document.querySelectorAll('.step');
-        let currentStepNumb = checkStep();
-        let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
 
-        //=====показ/скрытие кнопки "К предыдущему шагу"
-        if (nextStepNumb > 1) {
-            btnPrev.style.display = "block";
+        if (action == "next") {            
+            let currentStepNumb = checkStep();
+            let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
+
+            //=====показ/скрытие кнопки "К предыдущему шагу"
+            if (nextStepNumb > 1) {
+                btnPrev.style.display = "block";
+            }
+            //========
+
+            //====показ/скрытие кнопки submit
+            if (nextStepNumb == 3) {
+                btnNext.style.display = "none";
+                btnSubmit.style.display = "block";
+            }
+            //====
+
+            for (let item of allSteps) {
+                item.classList.remove('active');
+                document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
+            }
         }
-        //========
 
-        //====показ/скрытие кнопки submit
-        if (nextStepNumb == 3) {
-            btnNext.style.display = "none";
-            btnSubmit.style.display = "block";
+        if (action == "prev") {
+            let currentStepNumb = checkStep();
+            let nextStepNumb = (currentStepNumb == 1) ? currentStepNumb : currentStepNumb - 1;
+    
+            //=====показ/скрытие кнопки "К предыдущему шагу"
+            if (nextStepNumb < 4) {
+                btnPrev.style.display = "block";
+            }
+    
+            if (nextStepNumb == 1) {
+                btnPrev.style.display = "none";
+            }
+            //========
+    
+            //====показ/скрытие кнопки submit
+            if (nextStepNumb == 3) {
+                btnNext.style.display = "none";
+                btnSubmit.style.display = "block";
+            } else {
+                btnNext.style.display = "block";
+                btnSubmit.style.display = "none";
+            }
+            //====
+
+            for (let item of allSteps) {
+                item.classList.remove('active');
+                document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
+            }
         }
-        //====
 
-        for (let item of allSteps) {
-            item.classList.remove('active');
-            document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
+        if (action == "submit") {
+            let currentStepNumb = checkStep();
+            let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
+    
+            //=====скрытие кнопки "К предыдущему шагу"
+            if (nextStepNumb == 4) {
+                btnPrev.style.display = "none";
+            }
+            //========
+    
+            //====скрытие кнопки submit
+            if (nextStepNumb == 4) {
+                btnNext.style.display = "none";
+                btnSubmit.style.display = "none";
+                btnClose.style.display = "block";
+            } 
+            //====
+
+            for (let item of allSteps) {
+                item.classList.remove('active');
+                document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
+            }
         }
 
         changeActiveNumber();
+    }
+
+    //проверка полей
+    
+
+    function checkInput() {
+        let inputText = document.querySelectorAll('.form__item-input');
+        
+        for (let item of inputText) {
+            
+        }
+    }
+
+    btnNext.addEventListener('click', function(evt) {
+        evt.preventDefault();
+        stepHandle("next");
     });
 
     btnPrev.addEventListener('click', function(evt) {
         evt.preventDefault();
-
-        let allSteps = document.querySelectorAll('.step');
-        let currentStepNumb = checkStep();
-        let nextStepNumb = (currentStepNumb == 1) ? currentStepNumb : currentStepNumb - 1;
-
-        //=====показ/скрытие кнопки "К предыдущему шагу"
-        if (nextStepNumb < 4) {
-            btnPrev.style.display = "block";
-        }
-
-        if (nextStepNumb == 1) {
-            btnPrev.style.display = "none";
-        }
-        //========
-
-        //====показ/скрытие кнопки submit
-        if (nextStepNumb == 3) {
-            btnNext.style.display = "none";
-            btnSubmit.style.display = "block";
-        } else {
-            btnNext.style.display = "block";
-            btnSubmit.style.display = "none";
-        }
-        //====
-
-        for (let item of allSteps) {
-            item.classList.remove('active');
-            document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
-        }
-
-        changeActiveNumber();
+        stepHandle("prev")
     });
 
+    // отправка формы
+    /*
+        Здесь только функционал переключения шагов при отправке формы
+    */
     form.addEventListener('submit', function(evt) {
         evt.preventDefault();
-
-        let allSteps = document.querySelectorAll('.step');
-        let currentStepNumb = checkStep();
-        let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
-
-        //=====скрытие кнопки "К предыдущему шагу"
-        if (nextStepNumb == 4) {
-            btnPrev.style.display = "none";
-        }
-        //========
-
-        //====скрытие кнопки submit
-        if (nextStepNumb == 4) {
-            btnNext.style.display = "none";
-            btnSubmit.style.display = "none";
-            btnClose.style.display = "block";
-        } 
-        //====
-
-        for (let item of allSteps) {
-            item.classList.remove('active');
-            document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
-        }
-
-        changeActiveNumber();
-    })
+        stepHandle("submit");
+    });
     
     
     //=====Показ имени файлов========
