@@ -12,6 +12,17 @@ $(document).ready(function() {
         return +stepActiveNumb;
     }
 
+    function changeActiveNumber() {
+        let stepActive = document.querySelector('.step.active');
+        let stepActiveNumb = stepActive.getAttribute('data-step');
+        let allNumbers = document.querySelectorAll('.numbers__item');
+
+        for (let item of allNumbers) {
+            item.classList.remove('active');
+            document.querySelector('.numbers__item[data-step="'+ stepActiveNumb +'"]').classList.add('active');
+        }
+    }
+
 
     btnNext.addEventListener('click', function(evt) {
         evt.preventDefault();
@@ -20,6 +31,7 @@ $(document).ready(function() {
         let currentStepNumb = checkStep();
         let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
 
+        //=====показ/скрытие кнопки "К предыдущему шагу"
         if (nextStepNumb > 1) {
             btnPrev.style.display = "block";
         }
@@ -27,11 +39,14 @@ $(document).ready(function() {
         if (nextStepNumb == 4) {
             btnPrev.style.display = "none";
         }
+        //========
 
         for (let item of allSteps) {
             item.classList.remove('active');
             document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
         }
+
+        changeActiveNumber();
     });
 
     btnPrev.addEventListener('click', function(evt) {
@@ -41,6 +56,7 @@ $(document).ready(function() {
         let currentStepNumb = checkStep();
         let nextStepNumb = (currentStepNumb == 1) ? currentStepNumb : currentStepNumb - 1;
 
+        //=====показ/скрытие кнопки "К предыдущему шагу"
         if (nextStepNumb < 4) {
             btnPrev.style.display = "block";
         }
@@ -48,11 +64,14 @@ $(document).ready(function() {
         if (nextStepNumb == 1) {
             btnPrev.style.display = "none";
         }
+        //========
 
         for (let item of allSteps) {
             item.classList.remove('active');
             document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
         }
+
+        changeActiveNumber();
     });
 
     
