@@ -27,25 +27,28 @@ $(document).ready(function() {
         let allSteps = $('.step');
 
         if (action == "next") {        
-            
-            let currentStepNumb = checkStep();
-            let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
-
-            //=====показ/скрытие кнопки "К предыдущему шагу"
-            if (nextStepNumb > 1) {
-                btnPrev.show();
+            console.log(checkInput())
+            if (checkInput()) {
+                let currentStepNumb = checkStep();
+                let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
+    
+                //=====показ/скрытие кнопки "К предыдущему шагу"
+                if (nextStepNumb > 1) {
+                    btnPrev.show();
+                }
+                //========            
+                
+                //====показ/скрытие кнопки submit
+                if (nextStepNumb == 3) {
+                    btnNext.hide();
+                    btnSubmit.show();
+                }
+                //====
+    
+                allSteps.removeClass('active');
+                $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
             }
-            //========            
             
-            //====показ/скрытие кнопки submit
-            if (nextStepNumb == 3) {
-                btnNext.hide();
-                btnSubmit.show();
-            }
-            //====
-
-            allSteps.removeClass('active');
-            $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
             
         }
 
@@ -102,24 +105,71 @@ $(document).ready(function() {
         changeActiveNumber();
     }
 
-    //проверка текстовых полей
+    //проверка текстовых полей и чекбокса
     function checkInput() {
-        if (document.querySelector('.step[data-step="2"]').classList.contains('active')) {
-            let inputText = document.querySelectorAll('.form__item-input.required');
-            
-        
-            for (let item of inputText) {
-                if (item.value == "") {
-                    item.classList.add('error');
+        if ($('.step[data-step="2"]').hasClass('active')) {
+            let inputText = $('.form__item-input.required');       
+            let agree = $('input.agree');    
+
+            inputText.each(function() {
+                if ($(this).val() == "") {
+                    $(this).addClass('error');
                 } else {
-                    
+                    $(this).removeClass('error');
                 }
+            });
+
+            if (agree.is(':checked')) {
+                agree.removeClass('error')
+            } else {
+                agree.addClass('error');
             }
+            
+            if (inputText.hasClass('error') && agree.hasClass('error')) {
+                return false;
+            } else {
+                return true;
+            }
+            
         } else {
             return true;
-        }
-        
+        }        
     }
+
+    //ввод значений в поля
+    $('input[data-valid="numbers"]').on('input', function () {
+        if (this.value.match(/[^0-9]/g)) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        }
+    })
+
+    $('input[data-valid="letter"]').on('input', function () {
+        if (this.value.match(/[^а-яА-Яa-zA-Z\s]/g)) {
+            this.value = this.value.replace(/[^а-яА-Яa-zA-Z\s]/g, '');
+        }
+    });
+
+    //маска
+    $('input[name="inn"]').mask("999999999999", {placeholder:""});
+
+
+    $.fn.setCursorPosition = function(pos) {
+        if ($(this).get(0).setSelectionRange) {
+            $(this).get(0).setSelectionRange(pos, pos);
+        } else if ($(this).get(0).createTextRange) {
+            var range = $(this).get(0).createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', pos);
+            range.moveStart('character', pos);
+            range.select();
+        }
+    };
+    $('input[name="tel"]').click(function(){
+        $(this).setCursorPosition(3);
+    }).mask("+7(999) 999-9999");
+    $('input[name="tel"]').mask("+7(999)999-99-99");
+
+    
 
     btnNext.on('click', function(evt) {
         evt.preventDefault();
