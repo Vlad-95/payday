@@ -118,7 +118,8 @@
     }
 
     .step-next,
-    .submit {
+    .submit,
+    .close {
         background-color: @blue;
         border: 1px solid @blue;
         font-size: 16px;
@@ -132,7 +133,8 @@
         letter-spacing: 1.1px;
     }
 
-    .submit {
+    .submit,
+    .close {
         display: none;
     }
 
@@ -362,6 +364,7 @@
         input {
             visibility: hidden;
             position: absolute;
+            width: 100%;
         }
 
         &__text {
@@ -476,7 +479,9 @@
 
 @media screen and (max-width: 1200px) {
     .form {
-        .step-next {
+        .step-next,
+        .submit,
+        .close {
             height: 60px;
         }
 
@@ -566,7 +571,9 @@
             }
         }
 
-        .step-next {
+        .step-next,
+        .submit,
+        .close {
             font-size: 14px;
             height: 50px;
             max-width: 300px;
@@ -659,10 +666,6 @@
                     margin-bottom: 0;
                 }
             }
-        }
-
-        &__item {
-            
         }
 
         &__row {

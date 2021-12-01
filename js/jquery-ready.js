@@ -1,10 +1,11 @@
-$(document).ready(function() {
-
-    //Переключение по шагам
+$(document).ready(function() {   
     let btnNext = document.querySelector('.step-next');
     let btnPrev = document.querySelector('.step-back');
-    let btnSubmit = document.querySelectorAll('.submit');
-
+    let btnSubmit = document.querySelector('.submit');
+    let btnClose = document.querySelector('.close');
+    let form = document.querySelector('.form');
+    
+    //Переключение по шагам
     function checkStep() {
         let stepActive = document.querySelector('.step.active');
         let stepActiveNumb = stepActive.getAttribute('data-step');
@@ -35,11 +36,14 @@ $(document).ready(function() {
         if (nextStepNumb > 1) {
             btnPrev.style.display = "block";
         }
-
-        if (nextStepNumb == 4) {
-            btnPrev.style.display = "none";
-        }
         //========
+
+        //====показ/скрытие кнопки submit
+        if (nextStepNumb == 3) {
+            btnNext.style.display = "none";
+            btnSubmit.style.display = "block";
+        }
+        //====
 
         for (let item of allSteps) {
             item.classList.remove('active');
@@ -66,6 +70,16 @@ $(document).ready(function() {
         }
         //========
 
+        //====показ/скрытие кнопки submit
+        if (nextStepNumb == 3) {
+            btnNext.style.display = "none";
+            btnSubmit.style.display = "block";
+        } else {
+            btnNext.style.display = "block";
+            btnSubmit.style.display = "none";
+        }
+        //====
+
         for (let item of allSteps) {
             item.classList.remove('active');
             document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
@@ -74,6 +88,34 @@ $(document).ready(function() {
         changeActiveNumber();
     });
 
+    form.addEventListener('submit', function(evt) {
+        evt.preventDefault();
+
+        let allSteps = document.querySelectorAll('.step');
+        let currentStepNumb = checkStep();
+        let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
+
+        //=====скрытие кнопки "К предыдущему шагу"
+        if (nextStepNumb == 4) {
+            btnPrev.style.display = "none";
+        }
+        //========
+
+        //====скрытие кнопки submit
+        if (nextStepNumb == 4) {
+            btnNext.style.display = "none";
+            btnSubmit.style.display = "none";
+            btnClose.style.display = "block";
+        } 
+        //====
+
+        for (let item of allSteps) {
+            item.classList.remove('active');
+            document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
+        }
+
+        changeActiveNumber();
+    })
     
     
     //=====Показ имени файлов========
