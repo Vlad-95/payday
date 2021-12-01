@@ -47,6 +47,9 @@ $(document).ready(function() {
     
                 allSteps.removeClass('active');
                 $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
+                btnNext.removeClass('disabled');
+            } else {                
+                btnNext.addClass('disabled');
             }
             
             
@@ -167,9 +170,10 @@ $(document).ready(function() {
     $('input[name="tel"]').click(function(){
         $(this).setCursorPosition(3);
     }).mask("+7(999) 999-9999");
+
     $('input[name="tel"]').mask("+7(999)999-99-99");
 
-    
+
 
     btnNext.on('click', function(evt) {
         evt.preventDefault();
