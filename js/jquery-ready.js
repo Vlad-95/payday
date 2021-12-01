@@ -1,54 +1,52 @@
 $(document).ready(function() {   
-    let btnNext = document.querySelector('.step-next');
-    let btnPrev = document.querySelector('.step-back');
-    let btnSubmit = document.querySelector('.submit');
-    let btnClose = document.querySelector('.close');
-    let form = document.querySelector('.form');
+    let btnNext = $('.step-next');
+    let btnPrev = $('.step-back');
+    let btnSubmit = $('.submit');
+    let btnClose = $('.close');
+    let form = $('.form');
     
     //Переключение по шагам
     function checkStep() {
-        let stepActive = document.querySelector('.step.active');
-        let stepActiveNumb = stepActive.getAttribute('data-step');
+        let stepActive = $('.step.active');
+        let stepActiveNumb = stepActive.attr('data-step');
 
         return +stepActiveNumb;
     }
 
     function changeActiveNumber() {
-        let stepActive = document.querySelector('.step.active');
-        let stepActiveNumb = stepActive.getAttribute('data-step');
-        let allNumbers = document.querySelectorAll('.numbers__item');
+        let stepActive = $('.step.active');
+        let stepActiveNumb = stepActive.attr('data-step');
+        let numberItem = $('.numbers__item');
 
-        for (let item of allNumbers) {
-            item.classList.remove('active');
-            document.querySelector('.numbers__item[data-step="'+ stepActiveNumb +'"]').classList.add('active');
-        }
+        numberItem.removeClass('active');
+        $('.numbers__item[data-step="'+ stepActiveNumb +'"]').addClass('active');
     }
 
     function stepHandle(action) {
 
-        let allSteps = document.querySelectorAll('.step');
+        let allSteps = $('.step');
 
-        if (action == "next") {            
+        if (action == "next") {        
+            
             let currentStepNumb = checkStep();
             let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
 
             //=====показ/скрытие кнопки "К предыдущему шагу"
             if (nextStepNumb > 1) {
-                btnPrev.style.display = "block";
+                btnPrev.show();
             }
-            //========
-
+            //========            
+            
             //====показ/скрытие кнопки submit
             if (nextStepNumb == 3) {
-                btnNext.style.display = "none";
-                btnSubmit.style.display = "block";
+                btnNext.hide();
+                btnSubmit.show();
             }
             //====
 
-            for (let item of allSteps) {
-                item.classList.remove('active');
-                document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
-            }
+            allSteps.removeClass('active');
+            $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
+            
         }
 
         if (action == "prev") {
@@ -57,28 +55,26 @@ $(document).ready(function() {
     
             //=====показ/скрытие кнопки "К предыдущему шагу"
             if (nextStepNumb < 4) {
-                btnPrev.style.display = "block";
+                btnPrev.show();
             }
     
             if (nextStepNumb == 1) {
-                btnPrev.style.display = "none";
+                btnPrev.hide();
             }
             //========
     
             //====показ/скрытие кнопки submit
             if (nextStepNumb == 3) {
-                btnNext.style.display = "none";
-                btnSubmit.style.display = "block";
+                btnNext.hide();
+                btnSubmit.show();
             } else {
-                btnNext.style.display = "block";
-                btnSubmit.style.display = "none";
+                btnNext.show();
+                btnSubmit.hide();
             }
             //====
 
-            for (let item of allSteps) {
-                item.classList.remove('active');
-                document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
-            }
+            allSteps.removeClass('active');
+            $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
         }
 
         if (action == "submit") {
@@ -87,44 +83,50 @@ $(document).ready(function() {
     
             //=====скрытие кнопки "К предыдущему шагу"
             if (nextStepNumb == 4) {
-                btnPrev.style.display = "none";
+                btnPrev.hide();
             }
             //========
     
             //====скрытие кнопки submit
             if (nextStepNumb == 4) {
-                btnNext.style.display = "none";
-                btnSubmit.style.display = "none";
-                btnClose.style.display = "block";
+                btnNext.hide();
+                btnSubmit.hide();
+                btnClose.show();
             } 
             //====
 
-            for (let item of allSteps) {
-                item.classList.remove('active');
-                document.querySelector('.step[data-step="'+ nextStepNumb +'"]').classList.add('active');
-            }
+            allSteps.removeClass('active');
+            $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
         }
 
         changeActiveNumber();
     }
 
-    //проверка полей
-    
-
+    //проверка текстовых полей
     function checkInput() {
-        let inputText = document.querySelectorAll('.form__item-input');
-        
-        for (let item of inputText) {
+        if (document.querySelector('.step[data-step="2"]').classList.contains('active')) {
+            let inputText = document.querySelectorAll('.form__item-input.required');
             
+        
+            for (let item of inputText) {
+                if (item.value == "") {
+                    item.classList.add('error');
+                } else {
+                    
+                }
+            }
+        } else {
+            return true;
         }
+        
     }
 
-    btnNext.addEventListener('click', function(evt) {
+    btnNext.on('click', function(evt) {
         evt.preventDefault();
         stepHandle("next");
     });
 
-    btnPrev.addEventListener('click', function(evt) {
+    btnPrev.on('click', function(evt) {
         evt.preventDefault();
         stepHandle("prev")
     });
@@ -133,7 +135,7 @@ $(document).ready(function() {
     /*
         Здесь только функционал переключения шагов при отправке формы
     */
-    form.addEventListener('submit', function(evt) {
+    form.on('submit', function(evt) {
         evt.preventDefault();
         stepHandle("submit");
     });
