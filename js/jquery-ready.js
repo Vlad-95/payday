@@ -217,20 +217,41 @@ $(document).ready(function() {
 
         let files = evt.originalEvent.dataTransfer.files;
 
-        console.log($('#files').val())
+        console.log(files[0])
 
         for (let i = 0; i < files.length; i++) {
             dropzone.next().append('<div class="filelist__item"><p class="filelist__item-name">'+ files[i].name +'</p><div class="delete"></div></div>')
         }
     });
 
+    $('#files').filepond();
+
     $('#files').on('change', function(evt) {
-        let files = $(this)[0].files;
-        
-        console.log(files)
-        for (let i = 0; i < files.length; i++) {
-            dropzone.next().append('<div class="filelist__item"><p class="filelist__item-name">'+ files[i].name +'</p><div class="delete"></div></div>')
-        }
+        console.log($(this).val());
+        // let dt = new DataTransfer();
+
+        // console.log(dt.files)
+    
+        // let files = $(this)[0].files[0];
+
+        // let reader = new FileReader();
+      
+        // reader.readAsDataURL(files);
+      
+        // reader.onload = function() {
+        //   console.log(reader.result);
+        // };
+      
+        // reader.onerror = function() {
+        //   console.log(reader.error);
+        // };
+
+        // for (let file of files) {
+        //     //dt.items.add(files[i]);
+            
+        //     dropzone.next().append('<div class="filelist__item"><p class="filelist__item-name">'+ file.name +'</p><div class="delete"></div></div>')
+        // }
+
     });
 
     $('.filelist').on('click', '.delete', function() {
