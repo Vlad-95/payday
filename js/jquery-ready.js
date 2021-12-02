@@ -111,10 +111,10 @@ $(document).ready(function() {
     //проверка текстовых полей и чекбокса
     function checkInput() {
         if ($('.step[data-step="2"]').hasClass('active')) {
-            let inputText = $('.form__item-input.required');       
+            let inputs = $('.form__item-input.required');       
             let agree = $('input.agree');    
 
-            inputText.each(function() {
+            inputs.each(function() {
                 if ($(this).val() == "") {
                     $(this).addClass('error');
                 } else {
@@ -122,16 +122,16 @@ $(document).ready(function() {
                 }
             });
 
-            if (agree.is(':checked')) {
-                agree.removeClass('error')
+            if (!agree.is(':checked')) {
+                agree.addClass('error')
             } else {
-                agree.addClass('error');
+                agree.removeClass('error');
             }
             
-            if (inputText.hasClass('error') && agree.hasClass('error')) {
+            if ($('.step[data-step="2"].active input.error').length) {
                 return false;
             } else {
-                return true;
+                return true
             }
             
         } else {
