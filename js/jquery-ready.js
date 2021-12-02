@@ -27,7 +27,6 @@ $(document).ready(function() {
         let allSteps = $('.step');
 
         if (action == "next") {        
-            console.log(checkInput())
             if (checkInput()) {
                 let currentStepNumb = checkStep();
                 let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
@@ -47,9 +46,6 @@ $(document).ready(function() {
     
                 allSteps.removeClass('active');
                 $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
-                btnNext.removeClass('disabled');
-            } else {                
-                btnNext.addClass('disabled');
             }
             
             
@@ -112,7 +108,7 @@ $(document).ready(function() {
     function checkInput() {
         if ($('.step[data-step="2"]').hasClass('active')) {
             let inputs = $('.form__item-input.required');       
-            let agree = $('input.agree');    
+            let agree = $('input.agree');
 
             inputs.each(function() {
                 if ($(this).val() == "") {
@@ -129,8 +125,12 @@ $(document).ready(function() {
             }
             
             if ($('.step[data-step="2"].active input.error').length) {
+                btnNext.addClass('disabled');
+                $('div.error').text('Поля обозначенные * являются обязательными для заполнения').fadeIn();
                 return false;
             } else {
+                btnNext.removeClass('disabled');
+                $('div.error').text('').fadeOut()
                 return true
             }
             
@@ -138,6 +138,8 @@ $(document).ready(function() {
             return true;
         }        
     }
+
+    $('input').on('change', checkInput);
 
     //ввод значений в поля
     $('input[data-valid="numbers"]').on('input', function () {
@@ -195,40 +197,43 @@ $(document).ready(function() {
     });
     
     
-    //=====Показ имени файлов========
-    // $('.form').on('change', 'input[type="file"]', function() {
+    //=====Инпут с файлами========
+    let dropzone = $('.dropzone');
+	let base_url = window.location.origin + '/';
+
+    dropzone.on('dragover', function() {
+        $(this).addClass('dragover');
+        return false;
+    });
+    
+    dropzone.on('dragleave', function() {
+        $(this).removeClass('dragover');
+        return false;
+    });
+    
+    dropzone.on('drop', function(evt) {
+        evt.preventDefault();
+        $(this).removeClass('dragover');
+
+        let files = evt.originalEvent.dataTransfer.files;
+
+        console.log($('#files').val())
+
+        for (let i = 0; i < files.length; i++) {
+            dropzone.next().append('<div class="filelist__item"><p class="filelist__item-name">'+ files[i].name +'</p><div class="delete"></div></div>')
+        }
+    });
+
+    $('#files').on('change', function(evt) {
+        let files = $(this)[0].files;
         
-    //     //$('.files-list__item').remove();
-    //     let fileName = $(this)[0].files[0].name;
-    //     let clone = $(this).closest('.form__file').clone();
-        
-    //     let fileElement = $(document.createElement('div'));
-    //     let fileElementDel = $(document.createElement('div'));
+        console.log(files)
+        for (let i = 0; i < files.length; i++) {
+            dropzone.next().append('<div class="filelist__item"><p class="filelist__item-name">'+ files[i].name +'</p><div class="delete"></div></div>')
+        }
+    });
 
-    //     fileElement.addClass('files-list__item');
-    //     fileElementDel.addClass('delete');
-    //     fileElement.attr('data-count', $('.form__file').length)
-
-    //     fileElement.text(fileName);
-    //     $('.files-list').append(fileElement);
-    //     fileElement.append(fileElementDel);
-        
-    //     $('.form__item.file').append(clone)
-    //     $(this).closest('.form__file').hide();
-    //     clone.find('input').val('');
-    //     clone.find('input').attr('data-count', $('.form__file').length);
-    //     clone.find('input').attr('name', 'file['+ $('.form__file').length +']');        
-    // })
-
-    // //удаление файлов
-
-    // $('.form').on('click', '.delete', function() {
-    //     let fileItem = $(this).parent();
-    //     let fileItemCount = fileItem.attr('data-count');
-
-    //     $('input[data-count="'+ fileItemCount +'"]').val("");
-    //     fileItem.hide();        
-    // })
-
-    //=====Показ имени файлов КОНЕЦ=======
+    $('.filelist').on('click', '.delete', function() {
+        $(this).closest('.filelist__item').remove();
+    })
 });

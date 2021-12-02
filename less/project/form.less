@@ -131,6 +131,12 @@
         max-width: 380px;
         height: 72px;
         letter-spacing: 1.1px;
+
+        &.disabled {
+            background-color: #DBDBDB;
+            border-color: #DBDBDB;
+            cursor: default;
+        }
     }
 
     .submit,
@@ -360,6 +366,11 @@
         align-items: center;
         position: relative;
         height: 239px;
+        cursor: pointer;
+
+        &.dragover {
+            border-color: @blue;
+        }
 
         input {
             visibility: hidden;
