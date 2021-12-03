@@ -80,25 +80,28 @@ $(document).ready(function() {
         }
 
         if (action == "submit") {
-            let currentStepNumb = checkStep();
-            let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
+            if (checkInput()) {
+                let currentStepNumb = checkStep();
+                let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
+        
+                //=====скрытие кнопки "К предыдущему шагу"
+                if (nextStepNumb == 4) {
+                    //btnPrev.hide();
+                }
+                //========
+        
+                //====скрытие кнопки submit
+                if (nextStepNumb == 4) {
+                    btnNext.hide();
+                    btnSubmit.hide();
+                    btnClose.show();
+                } 
+                //====
     
-            //=====скрытие кнопки "К предыдущему шагу"
-            if (nextStepNumb == 4) {
-                btnPrev.hide();
+                allSteps.removeClass('active');
+                $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
             }
-            //========
-    
-            //====скрытие кнопки submit
-            if (nextStepNumb == 4) {
-                btnNext.hide();
-                btnSubmit.hide();
-                btnClose.show();
-            } 
-            //====
-
-            allSteps.removeClass('active');
-            $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
+            
         }
 
         changeActiveNumber();
@@ -130,16 +133,29 @@ $(document).ready(function() {
                 return false;
             } else {
                 btnNext.removeClass('disabled');
-                $('div.error').text('').fadeOut()
+                $('div.error').text('').fadeOut();
                 return true
             }
             
+        } else if ($('.step[data-step="3"]').hasClass('active')) {
+
+            if (!$('.filelist').find('filelist__item').length) {
+                btnSubmit.addClass('disabled');
+                $('div.error').text('Прикрепите минимум один документ для продолжения').fadeIn();
+
+                return false;
+            } else {
+                btnNext.removeClass('disabled');
+                $('div.error').text('').fadeOut();
+                
+                return true;
+            }
         } else {
             return true;
         }        
     }
 
-    $('input').on('change', checkInput);
+    $('input[type="text"]').on('change', checkInput);
 
     //ввод значений в поля
     $('input[data-valid="numbers"]').on('input', function () {
@@ -156,23 +172,6 @@ $(document).ready(function() {
 
     //маска
     $('input[name="inn"]').mask("999999999999", {placeholder:""});
-
-
-    $.fn.setCursorPosition = function(pos) {
-        if ($(this).get(0).setSelectionRange) {
-            $(this).get(0).setSelectionRange(pos, pos);
-        } else if ($(this).get(0).createTextRange) {
-            var range = $(this).get(0).createTextRange();
-            range.collapse(true);
-            range.moveEnd('character', pos);
-            range.moveStart('character', pos);
-            range.select();
-        }
-    };
-    $('input[name="tel"]').click(function(){
-        $(this).setCursorPosition(3);
-    }).mask("+7(999) 999-9999");
-
     $('input[name="tel"]').mask("+7(999)999-99-99");
 
 
@@ -191,70 +190,86 @@ $(document).ready(function() {
     /*
         Здесь только функционал переключения шагов при отправке формы
     */
-    form.on('submit', function(evt) {
+    btnSubmit.on('click', function(evt) {
         evt.preventDefault();
         stepHandle("submit");
+    })
+    
+    form.on('submit', function(evt) {
+        evt.preventDefault();
+        
     });
     
     
     //=====Инпут с файлами========
-    let dropzone = $('.dropzone');
-	let base_url = window.location.origin + '/';
+    let dropZone = $('.dropzone');
+    let filelist = $('.filelist');
+    
 
-    dropzone.on('dragover', function() {
+    dropZone.on('dragover', function() {
         $(this).addClass('dragover');
         return false;
     });
     
-    dropzone.on('dragleave', function() {
+    dropZone.on('dragleave', function() {
         $(this).removeClass('dragover');
         return false;
     });
     
-    dropzone.on('drop', function(evt) {
+    dropZone.on('drop', function(evt) {
         evt.preventDefault();
         $(this).removeClass('dragover');
+        upload(evt.originalEvent.dataTransfer.files)
+    });    
 
-        let files = evt.originalEvent.dataTransfer.files;
+    $('.files').change(function(){
+        upload(this.files);
 
-        console.log(files[0])
-
-        for (let i = 0; i < files.length; i++) {
-            dropzone.next().append('<div class="filelist__item"><p class="filelist__item-name">'+ files[i].name +'</p><div class="delete"></div></div>')
+        if ($(this).val() != "") {
+            btnSubmit.removeClass('disabled');
+            $('div.error').text('').fadeOut();
         }
     });
 
-    $('#files').filepond();
+    function upload(files) {        
+        let  formData = new FormData();
 
-    $('#files').on('change', function(evt) {
-        console.log($(this).val());
-        // let dt = new DataTransfer();
-
-        // console.log(dt.files)
+        for (item of files) {
+            formData.append('files[]', item);            
+        }        
     
-        // let files = $(this)[0].files[0];
-
-        // let reader = new FileReader();
-      
-        // reader.readAsDataURL(files);
-      
-        // reader.onload = function() {
-        //   console.log(reader.result);
-        // };
-      
-        // reader.onerror = function() {
-        //   console.log(reader.error);
-        // };
-
-        // for (let file of files) {
-        //     //dt.items.add(files[i]);
-            
-        //     dropzone.next().append('<div class="filelist__item"><p class="filelist__item-name">'+ file.name +'</p><div class="delete"></div></div>')
-        // }
-
-    });
+        $.ajax({
+            type: "POST",//DELETE
+            url: 'upload.php',
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: formData,//поле name = имя файла
+            dataType : 'json',
+            success: function(data){      
+				for (item of data.files) {
+                    filelist.append(`<div class="filelist__item"><p class="filelist__item-name">${item}</p><div class="delete"></div></dvi></div>`)
+                }
+			}
+        });
+    }
 
     $('.filelist').on('click', '.delete', function() {
-        $(this).closest('.filelist__item').remove();
+        let fileName = $(this).parent().find('.filelist__item-name').text();
+        
+        $.ajax({
+            type: "DELETE",
+            url: 'upload.php?name='+fileName,
+            cache: false,
+            contentType: false,
+            processData: false,
+            //data: {'name' : fileName},//поле name = имя файла
+            dataType : 'json',
+            success: function(evt){  
+                if (evt.ok) {
+                    $('p.filelist__item-name:contains("'+ fileName +'")').parent().remove();
+                }    
+			}
+        });
     })
 });

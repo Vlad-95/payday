@@ -89,7 +89,7 @@
                 </div>
 
                 <form action="" class="form">
-                    <div class="step " data-step="1">
+                    <div class="step active" data-step="1">
                         <h2 class="form__title">Выберите банк-партнер из списка ниже, где будет открыт р/с</h2>
 
                         <div class="bank">
@@ -174,18 +174,16 @@
                         
                     </div>
 
-                    <div class="step active" data-step="3">
+                    <div class="step" data-step="3">
                         <h2 class="form__title">Приложите документы по компании (по вашему усмотрению)</h2>
                         
                         
                         <div class="file-wrap">
-                            <div class="left">
-                                <input type="file" multiple name="files" id="files">
-                                <!-- <label id="dropzone" class="dropzone">
-                                    
-
+                            <div class="left">                                
+                                <label id="dropzone" class="dropzone" for="files">
+                                    <input type="file" class="files" multiple name="files[]" id="files">
                                     <p class="dropzone__text">Переместите в эту область или <span>добавьте</span> соответствующие документы</p>
-                                </label> -->
+                                </label>
 
                                 <div class="filelist">
                                     <!-- <div class="filelist__item">
@@ -344,9 +342,6 @@
     </footer>
     <script src="js/libs/jquery-3.2.1.min.js"></script> 
     <script src="js/libs/jquery.maskedinput.js"></script>
-    <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
-
-<script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script>
     <script src="js/jquery-ready.js"></script>
     </body>
 </html>
