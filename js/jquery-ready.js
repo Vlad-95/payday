@@ -1,8 +1,6 @@
 $(document).ready(function() {   
     let btnNext = $('.step-next');
-    let btnPrev = $('.step-back');
-    let btnSubmit = $('.submit');
-    let btnClose = $('.close');
+    let btnPrev = $('.step-back');    
     let form = $('.form');
     
     //Переключение по шагам
@@ -20,91 +18,6 @@ $(document).ready(function() {
 
         numberItem.removeClass('active');
         $('.numbers__item[data-step="'+ stepActiveNumb +'"]').addClass('active');
-    }
-
-    function stepHandle(action) {
-
-        let allSteps = $('.step');
-
-        if (action == "next") {        
-            if (checkInput()) {
-                let currentStepNumb = checkStep();
-                let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
-    
-                //=====показ/скрытие кнопки "К предыдущему шагу"
-                if (nextStepNumb > 1) {
-                    btnPrev.show();
-                }
-                //========            
-                
-                //====показ/скрытие кнопки submit
-                if (nextStepNumb == 3) {
-                    btnNext.hide();
-                    btnSubmit.show();
-                }
-                //====
-    
-                allSteps.removeClass('active');
-                $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
-            }
-            
-            
-        }
-
-        if (action == "prev") {
-            let currentStepNumb = checkStep();
-            let nextStepNumb = (currentStepNumb == 1) ? currentStepNumb : currentStepNumb - 1;
-    
-            //=====показ/скрытие кнопки "К предыдущему шагу"
-            if (nextStepNumb < 4) {
-                btnPrev.show();
-            }
-    
-            if (nextStepNumb == 1) {
-                btnPrev.hide();
-            }
-            //========
-    
-            //====показ/скрытие кнопки submit
-            if (nextStepNumb == 3) {
-                btnNext.hide();
-                btnSubmit.show();
-            } else {
-                btnNext.show();
-                btnSubmit.hide();
-            }
-            //====
-
-            allSteps.removeClass('active');
-            $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
-        }
-
-        if (action == "submit") {
-            if (checkInput()) {
-                let currentStepNumb = checkStep();
-                let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
-        
-                //=====скрытие кнопки "К предыдущему шагу"
-                if (nextStepNumb == 4) {
-                    //btnPrev.hide();
-                }
-                //========
-        
-                //====скрытие кнопки submit
-                if (nextStepNumb == 4) {
-                    btnNext.hide();
-                    btnSubmit.hide();
-                    btnClose.show();
-                } 
-                //====
-    
-                allSteps.removeClass('active');
-                $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
-            }
-            
-        }
-
-        changeActiveNumber();
     }
 
     //проверка текстовых полей и чекбокса
@@ -137,12 +50,17 @@ $(document).ready(function() {
                 return true
             }
             
-        } else if ($('.step[data-step="3"]').hasClass('active')) {
+        } else {
+            return true;
+        }        
+    }
 
-            if (!$('.filelist').find('filelist__item').length) {
-                btnSubmit.addClass('disabled');
+    function checkFile() {
+        if ($('.step[data-step="3"]').hasClass('active')) {
+            if (!$('.filelist').find('.filelist__item').length) {
+                btnNext.addClass('disabled');
                 $('div.error').text('Прикрепите минимум один документ для продолжения').fadeIn();
-
+    
                 return false;
             } else {
                 btnNext.removeClass('disabled');
@@ -151,11 +69,63 @@ $(document).ready(function() {
                 return true;
             }
         } else {
-            return true;
-        }        
+            return true
+        }
+        
     }
 
-    $('input[type="text"]').on('change', checkInput);
+    function stepHandle(action) {
+        let allSteps = $('.step');
+
+        if (action == "next") {        
+            if (checkInput() && checkFile()) {
+                let currentStepNumb = checkStep();
+                let nextStepNumb = (currentStepNumb == 4) ? currentStepNumb : currentStepNumb + 1;
+    
+                //=====показ/скрытие кнопки "К предыдущему шагу"
+                if (nextStepNumb > 1) {
+                    btnPrev.show();
+                }
+                //========
+
+                if (nextStepNumb == 4) {
+                    btnPrev.hide();
+                    form.trigger('submit');//тригер на отправку формы
+                    btnNext.text('Закрыть страницу');
+                }
+                //====
+    
+                allSteps.removeClass('active');
+                $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
+            }
+        }
+
+        if (action == "prev") {
+            let currentStepNumb = checkStep();
+            let nextStepNumb = (currentStepNumb == 1) ? currentStepNumb : currentStepNumb - 1;
+    
+            //=====показ/скрытие кнопки "К предыдущему шагу"
+            if (nextStepNumb < 4) {
+                btnPrev.show();
+                btnNext.text('Продолжить');
+            }
+    
+            if (nextStepNumb == 1) {
+                btnPrev.hide();
+            }
+            //========
+
+            allSteps.removeClass('active');
+            $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
+
+            btnNext.removeClass('disabled');
+            $('div.error').text('').fadeOut();
+        }
+
+        changeActiveNumber();
+    }    
+
+    $('input[type="text"], input[type="checkbox"]').on('change', checkInput);
 
     //ввод значений в поля
     $('input[data-valid="numbers"]').on('input', function () {
@@ -174,10 +144,9 @@ $(document).ready(function() {
     $('input[name="inn"]').mask("999999999999", {placeholder:""});
     $('input[name="tel"]').mask("+7(999)999-99-99");
 
-
-
     btnNext.on('click', function(evt) {
         evt.preventDefault();
+        //form.trigger('submit');
         stepHandle("next");
     });
 
@@ -187,24 +156,17 @@ $(document).ready(function() {
     });
 
     // отправка формы
-    /*
-        Здесь только функционал переключения шагов при отправке формы
-    */
-    btnSubmit.on('click', function(evt) {
-        evt.preventDefault();
-        stepHandle("submit");
-    })
-    
+    //Здесь только функционал переключения шагов при отправке формы
     form.on('submit', function(evt) {
+
         evt.preventDefault();
-        
+        console.log(1)
     });
     
     
     //=====Инпут с файлами========
     let dropZone = $('.dropzone');
-    let filelist = $('.filelist');
-    
+    let filelist = $('.filelist');    
 
     dropZone.on('dragover', function() {
         $(this).addClass('dragover');
@@ -239,19 +201,21 @@ $(document).ready(function() {
         }        
     
         $.ajax({
-            type: "POST",//DELETE
+            type: "POST",
             url: 'upload.php',
             cache: false,
             contentType: false,
             processData: false,
-            data: formData,//поле name = имя файла
+            data: formData,
             dataType : 'json',
             success: function(data){      
 				for (item of data.files) {
                     filelist.append(`<div class="filelist__item"><p class="filelist__item-name">${item}</p><div class="delete"></div></dvi></div>`)
                 }
+                
+                checkFile();                
 			}
-        });
+        });        
     }
 
     $('.filelist').on('click', '.delete', function() {
@@ -268,6 +232,8 @@ $(document).ready(function() {
             success: function(evt){  
                 if (evt.ok) {
                     $('p.filelist__item-name:contains("'+ fileName +'")').parent().remove();
+
+                    checkFile();
                 }    
 			}
         });

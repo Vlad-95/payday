@@ -1,7 +1,4 @@
-node_modules/
 yarn.lock
-# Gulpfile.js
-#package.json
 
 # CakePHP specific files #
 ##########################
@@ -50,5 +47,3 @@ nbproject/*
 # Sass preprocessor
 .sass-cache/
 node_modules
-# Gulpfile.js
-# package.json
