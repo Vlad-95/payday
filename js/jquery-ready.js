@@ -97,6 +97,12 @@ $(document).ready(function() {
     
                 allSteps.removeClass('active');
                 $('.step[data-step="'+ nextStepNumb +'"]').addClass('active');
+
+                if ($(window).width() <= 992) {
+                    $('html, body').animate({
+                        scrollTop: $('.numbers').offset().top
+                    })
+                }
             }
         }
 
